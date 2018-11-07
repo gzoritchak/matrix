@@ -10,3 +10,8 @@ With 4000 rectangles rendered:
 3. 60 FPS 44% CPU
 
 
+![](results/4000-pt-fillRect-33pctCPU.png)
+
+![](results/4000-pt-save-translate-restore-40FPS.png)
+
+![](results/4000pt-matrix-translate-44CPU.png)
