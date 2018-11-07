@@ -24,12 +24,12 @@
  * matrix multiplication).
  */
 data class Matrix(
-    var a: Double = 1.0,
-    var b: Double = 0.0,
-    var c: Double = 0.0,
-    var d: Double = 1.0,
-    var tx: Double = 0.0,
-    var ty: Double = 0.0
+    private var a: Double = 1.0,
+    private var b: Double = 0.0,
+    private var c: Double = 0.0,
+    private var d: Double = 1.0,
+    private var tx: Double = 0.0,
+    private var ty: Double = 0.0
 ) {
 
     fun reset(): Matrix {
@@ -44,7 +44,7 @@ data class Matrix(
 
     fun translate(x: Double, y: Double): Matrix {
         tx += x * a + y * c
-        ty += x * a + y * d
+        ty += x * b + y * d
         return this
     }
 

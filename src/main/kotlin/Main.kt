@@ -11,20 +11,22 @@ fun main(args: Array<String>) {
 
     val (context, canvas) = canvas()
     val squares = generateSquares(4000)
-    println("Yo man")
     renderSquares(squares, context)
+}
+
+fun Matrix.applyOn(context: CanvasRenderingContext2D){
+    context.setTransform(a, b, c, d, tx, ty)
 }
 
 fun renderSquares(squares: List<Square>, context: CanvasRenderingContext2D ){
     for (square in squares) {
         square.updatePos()
         context.fillStyle = "red"
-        context.save()
-        context.translate(square.x, square.y)
+        Matrix().translate(square.x, square.y).applyOn(context)
         context.fillRect(.0, .0, square.size, square.size)
-        context.restore()
     }
     window.requestAnimationFrame {
+        Matrix().applyOn(context)
         context.clearRect(.0, .0, width.toDouble(), width.toDouble())
         renderSquares(squares, context)
     }
@@ -36,7 +38,6 @@ fun generateSquares(count: Int)  = (1..count).map {
 
 
 data class Square(var x:Double, val y:Double, val size:Double) {
-
     var dx = 1
 
     fun updatePos() {
