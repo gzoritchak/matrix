@@ -1,4 +1,4 @@
-
+import org.w3c.dom.CanvasRenderingContext2D
 
 /**
  * @name Matrix
@@ -24,12 +24,12 @@
  * matrix multiplication).
  */
 data class Matrix(
-    private var a: Double = 1.0,
-    private var b: Double = 0.0,
-    private var c: Double = 0.0,
-    private var d: Double = 1.0,
-    private var tx: Double = 0.0,
-    private var ty: Double = 0.0
+    internal var a: Double = 1.0,
+    internal var b: Double = 0.0,
+    internal var c: Double = 0.0,
+    internal var d: Double = 1.0,
+    internal var tx: Double = 0.0,
+    internal var ty: Double = 0.0
 ) {
 
     fun reset(): Matrix {
@@ -90,4 +90,8 @@ data class Matrix(
     }
 
 
+}
+
+fun Matrix.applyOn(context: CanvasRenderingContext2D){
+    context.setTransform(a, b, c, d, tx, ty)
 }

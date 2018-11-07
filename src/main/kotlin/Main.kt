@@ -14,9 +14,7 @@ fun main(args: Array<String>) {
     renderSquares(squares, context)
 }
 
-fun Matrix.applyOn(context: CanvasRenderingContext2D){
-    context.setTransform(a, b, c, d, tx, ty)
-}
+
 
 fun renderSquares(squares: List<Square>, context: CanvasRenderingContext2D ){
     for (square in squares) {
