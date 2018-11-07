@@ -19,7 +19,10 @@ fun renderSquares(squares: List<Square>, context: CanvasRenderingContext2D ){
     for (square in squares) {
         square.updatePos()
         context.fillStyle = "red"
-        context.fillRect(square.x, square.y, square.size, square.size)
+        context.save()
+        context.translate(square.x, square.y)
+        context.fillRect(.0, .0, square.size, square.size)
+        context.restore()
     }
     window.requestAnimationFrame {
         context.clearRect(.0, .0, width.toDouble(), width.toDouble())
