@@ -3,30 +3,27 @@ import org.w3c.dom.HTMLCanvasElement
 import kotlin.browser.document
 import kotlin.browser.window
 
-const val canvasSize = 700
+const val canvasSize = 700.0
 
 fun main(args: Array<String>) {
-
     val (context, _) = canvas()
-    val rects = listOf(Rect(100.0, 200.0), Rect(300.0, 500.0))
-    renderSquares(rects, context)
+    val rectangles = listOf(Rect(100.0, 200.0), Rect(300.0, 500.0))
+    renderSquares(rectangles, context)
 }
 
-var frameCount = 0
 var scale = 1.0
 var rotation = 0.deg
 
-fun renderSquares(rects: List<Rect>, context: CanvasRenderingContext2D) {
+fun renderSquares(rectangles: List<Rect>, context: CanvasRenderingContext2D) {
 
     window.requestAnimationFrame {
-        frameCount++
         val matrix = Matrix().applyOn(context)
-        context.clearRect(.0, .0, canvasSize.toDouble(), canvasSize.toDouble())
+        context.clearRect(.0, .0, canvasSize, canvasSize)
         context.fillStyle = "red"
         updateRotation()
         updateScale()
 
-        for (rect in rects) {
+        for (rect in rectangles) {
             rect.updatePosition()
             matrix
                 .reset()
@@ -36,7 +33,7 @@ fun renderSquares(rects: List<Rect>, context: CanvasRenderingContext2D) {
             context.fillRect(rect.x, rect.y, rect.width, rect.height)
 
         }
-        renderSquares(rects, context)
+        renderSquares(rectangles, context)
     }
 }
 
@@ -56,8 +53,8 @@ private fun updateScale() {
 }
 
 data class Rect(var x: Double, var y: Double, val width: Double = 200.0, val height: Double = 100.0) {
-    var dx = 2.0
-    var dy = 2.0
+    private var dx = 2.0
+    private var dy = 2.0
 
     var position: Point
         get() = Point(x, y)
@@ -70,20 +67,18 @@ data class Rect(var x: Double, var y: Double, val width: Double = 200.0, val hei
         get() = Point(x + .5 * width, y + .5 * height)
 
     fun updatePosition() {
-        if (x > canvasSize && dx > 0) dx *= -1
-        if (x < 0 && dx < 0) dx *= -1
-        if (y > canvasSize && dy > 0) dy *= -1
-        if (y < 0 && dy < 0) dy *= -1
+        if (x !in 0.0..canvasSize) dx *= -1
+        if (y !in 0.0..canvasSize) dy *= -1
         position += Point(dx, dy)
     }
 }
 
 fun canvas(): Pair<CanvasRenderingContext2D, HTMLCanvasElement> {
-    val canvas = document.createElement("canvas") as HTMLCanvasElement
-    canvas.height = canvasSize
-    canvas.width = canvasSize
-    val body = requireNotNull(document.querySelector("body"))
-    body.appendChild(canvas)
+    val canvas = (document.createElement("canvas") as HTMLCanvasElement).apply {
+        height = canvasSize.toInt()
+        width = canvasSize.toInt()
+    }
+    requireNotNull(document.querySelector("body")).appendChild(canvas)
     val context = canvas.getContext("2d") as CanvasRenderingContext2D
     return context to canvas
 }
