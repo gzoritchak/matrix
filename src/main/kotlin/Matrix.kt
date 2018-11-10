@@ -89,9 +89,9 @@ data class Matrix(
         return this
     }
 
-
 }
 
-fun Matrix.applyOn(context: CanvasRenderingContext2D){
+fun Matrix.applyOn(context: CanvasRenderingContext2D): Matrix {
     context.setTransform(a, b, c, d, tx, ty)
+    return this
 }

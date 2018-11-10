@@ -2,46 +2,79 @@ import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLCanvasElement
 import kotlin.browser.document
 import kotlin.browser.window
-import kotlin.random.Random
-
 
 const val width = 800
 
 fun main(args: Array<String>) {
 
-    val (context, canvas) = canvas()
-    val squares = generateSquares(4000)
-    renderSquares(squares, context)
+    val (context, _) = canvas()
+    val rects = listOf(Rect(100.0, 200.0), Rect(300.0, 500.0))
+    renderSquares(rects, context)
 }
 
+var frameCount = 0
+var scale = 1.0
+var rotation = 0.deg
 
+fun renderSquares(rects: List<Rect>, context: CanvasRenderingContext2D) {
 
-fun renderSquares(squares: List<Square>, context: CanvasRenderingContext2D ){
-    for (square in squares) {
-        square.updatePos()
-        context.fillStyle = "red"
-        Matrix().translate(square.x, square.y).applyOn(context)
-        context.fillRect(.0, .0, square.size, square.size)
-    }
     window.requestAnimationFrame {
-        Matrix().applyOn(context)
+        frameCount++
+        val matrix = Matrix().applyOn(context)
         context.clearRect(.0, .0, width.toDouble(), width.toDouble())
-        renderSquares(squares, context)
+        context.fillStyle = "red"
+        updateRotation()
+        updateScale()
+
+        for (rect in rects) {
+            rect.updatePosition()
+            matrix
+                .reset()
+                .scale(scale, scale, rect.center)
+                .rotate(rotation, rect.center)
+                .applyOn(context)
+            context.fillRect(rect.x, rect.y, rect.width, rect.height)
+
+        }
+        renderSquares(rects, context)
     }
 }
 
-fun generateSquares(count: Int)  = (1..count).map {
-    Square(Random.nextDouble(800.0), Random.nextDouble(800.0), Random.nextDouble(15.0))
+private fun updateRotation() {
+    rotation += 2.deg
 }
 
+var scaleFactor = 1.01
+private fun updateScale() {
+    scale *= scaleFactor
+    if (scale > 2.0) {
+        scaleFactor = 1 / scaleFactor
+    }
+    if (scale < 0.5) {
+        scaleFactor = 1 / scaleFactor
+    }
+}
 
-data class Square(var x:Double, val y:Double, val size:Double) {
-    var dx = 1
+data class Rect(var x: Double, var y: Double, val width: Double = 200.0, val height: Double = 100.0) {
+    var dx = 2.0
+    var dy = 2.0
 
-    fun updatePos() {
-        if (x > width && dx > 0) dx *= -1
+    var position: Point
+        get() = Point(x, y)
+        set(value) {
+            x = value.x
+            y = value.y
+        }
+
+    val center: Point
+        get() = Point(x + .5 * width, y + .5 * height)
+
+    fun updatePosition() {
+        if (x > 800.0 && dx > 0) dx *= -1
         if (x < 0 && dx < 0) dx *= -1
-        x += dx
+        if (y > 800.0 && dy > 0) dy *= -1
+        if (y < 0 && dy < 0) dy *= -1
+        position += Point(dx, dy)
     }
 }
 
