@@ -3,7 +3,7 @@ import org.w3c.dom.HTMLCanvasElement
 import kotlin.browser.document
 import kotlin.browser.window
 
-const val width = 800
+const val canvasSize = 700
 
 fun main(args: Array<String>) {
 
@@ -21,7 +21,7 @@ fun renderSquares(rects: List<Rect>, context: CanvasRenderingContext2D) {
     window.requestAnimationFrame {
         frameCount++
         val matrix = Matrix().applyOn(context)
-        context.clearRect(.0, .0, width.toDouble(), width.toDouble())
+        context.clearRect(.0, .0, canvasSize.toDouble(), canvasSize.toDouble())
         context.fillStyle = "red"
         updateRotation()
         updateScale()
@@ -70,9 +70,9 @@ data class Rect(var x: Double, var y: Double, val width: Double = 200.0, val hei
         get() = Point(x + .5 * width, y + .5 * height)
 
     fun updatePosition() {
-        if (x > 800.0 && dx > 0) dx *= -1
+        if (x > canvasSize && dx > 0) dx *= -1
         if (x < 0 && dx < 0) dx *= -1
-        if (y > 800.0 && dy > 0) dy *= -1
+        if (y > canvasSize && dy > 0) dy *= -1
         if (y < 0 && dy < 0) dy *= -1
         position += Point(dx, dy)
     }
@@ -80,8 +80,8 @@ data class Rect(var x: Double, var y: Double, val width: Double = 200.0, val hei
 
 fun canvas(): Pair<CanvasRenderingContext2D, HTMLCanvasElement> {
     val canvas = document.createElement("canvas") as HTMLCanvasElement
-    canvas.height = width
-    canvas.width = width
+    canvas.height = canvasSize
+    canvas.width = canvasSize
     val body = requireNotNull(document.querySelector("body"))
     body.appendChild(canvas)
     val context = canvas.getContext("2d") as CanvasRenderingContext2D
