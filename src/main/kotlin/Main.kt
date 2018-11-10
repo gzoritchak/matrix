@@ -13,7 +13,7 @@ var rotation = 0.deg
 fun renderRectangles(context: CanvasRenderingContext2D, rectangles: List<Rect>) {
 
     window.requestAnimationFrame {
-        clearCanvas(context)
+        context.clear()
         updateRotation()
         updateScale()
 
@@ -23,16 +23,16 @@ fun renderRectangles(context: CanvasRenderingContext2D, rectangles: List<Rect>) 
                 .scale(scale, scale, rect.center)
                 .rotate(rotation, rect.center)
                 .applyOn(context)
+            context.fillStyle = "red"
             context.fillRect(rect.x, rect.y, rect.width, rect.height)
         }
         renderRectangles(context, rectangles)
     }
 }
 
-private fun clearCanvas(context: CanvasRenderingContext2D){
-    Matrix().applyOn(context)
-    context.clearRect(.0, .0, canvasSize, canvasSize)
-    context.fillStyle = "red"
+private fun CanvasRenderingContext2D.clear() {
+    Matrix().applyOn(this)
+    clearRect(.0, .0, canvasSize, canvasSize)
 }
 
 private fun updateRotation() {
