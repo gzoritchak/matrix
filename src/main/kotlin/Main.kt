@@ -1,40 +1,39 @@
-import org.w3c.dom.CanvasRenderingContext2D
-import org.w3c.dom.HTMLCanvasElement
-import kotlin.browser.document
-import kotlin.browser.window
+import org.w3c.dom.*
+import kotlin.browser.*
 
 const val canvasSize = 700.0
 
 fun main(args: Array<String>) {
     val (context, _) = canvas()
-    val rectangles = listOf(Rect(100.0, 200.0), Rect(300.0, 500.0))
-    renderSquares(rectangles, context)
+    renderRectangles(context, listOf(Rect(100.0, 200.0), Rect(300.0, 500.0)))
 }
 
 var scale = 1.0
 var rotation = 0.deg
 
-fun renderSquares(rectangles: List<Rect>, context: CanvasRenderingContext2D) {
+fun renderRectangles(context: CanvasRenderingContext2D, rectangles: List<Rect>) {
 
     window.requestAnimationFrame {
-        val matrix = Matrix().applyOn(context)
-        context.clearRect(.0, .0, canvasSize, canvasSize)
-        context.fillStyle = "red"
+        clearCanvas(context)
         updateRotation()
         updateScale()
 
         for (rect in rectangles) {
             rect.updatePosition()
-            matrix
-                .reset()
+            Matrix()
                 .scale(scale, scale, rect.center)
                 .rotate(rotation, rect.center)
                 .applyOn(context)
             context.fillRect(rect.x, rect.y, rect.width, rect.height)
-
         }
-        renderSquares(rectangles, context)
+        renderRectangles(context, rectangles)
     }
+}
+
+private fun clearCanvas(context: CanvasRenderingContext2D){
+    Matrix().applyOn(context)
+    context.clearRect(.0, .0, canvasSize, canvasSize)
+    context.fillStyle = "red"
 }
 
 private fun updateRotation() {
@@ -44,12 +43,8 @@ private fun updateRotation() {
 var scaleFactor = 1.01
 private fun updateScale() {
     scale *= scaleFactor
-    if (scale > 2.0) {
+    if (scale !in 0.5..2.0)
         scaleFactor = 1 / scaleFactor
-    }
-    if (scale < 0.5) {
-        scaleFactor = 1 / scaleFactor
-    }
 }
 
 data class Rect(var x: Double, var y: Double, val width: Double = 200.0, val height: Double = 100.0) {
